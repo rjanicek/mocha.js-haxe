@@ -24,7 +24,7 @@ class Main {
 
 ###test
 ```haxe
-class ExpectSpec {
+class MochaSpec {
 	public function new() {
 		M.describe("Mocha", function () {
 			M.it("should test things", function() {
