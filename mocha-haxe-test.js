@@ -496,7 +496,6 @@ js.Mocha.__name__ = true;
 js.Mocha.setup = function(opts) {
 	opts.ui = Std.string(opts.ui).toLowerCase();
 	if(Reflect.hasField(opts,"reporter")) opts.reporter = Std.string(opts.reporter).toLowerCase();
-	haxe.Log.trace(opts,{ fileName : "Mocha.hx", lineNumber : 46, className : "js.Mocha", methodName : "setup"});
 	mocha.setup(opts);
 }
 js.Mocha.run = function() {
