@@ -36,14 +36,18 @@ enum Reporter {
  * @author Richard Janicek
  */
 class Mocha {
-	public static function setup( opts : {ui : Ui, ?reporter : Reporter, ?globals : Array<String>, ?timeoutMilliseconds : Int, ?ignoreLeaks : Bool, ?grep : String} ):Void {
+	/**
+	 * Setup mocha with options.
+	 * -reporter does not work in browser, HTML is used by default
+	 * -grep is broken in browser
+	 */
+	public static function setup( opts : {ui : Ui, ?reporter : Reporter, ?globals : Array<String>, ?timeout /*milliseconds*/ : Int, ?ignoreLeaks : Bool, ?grep : String} ):Void {
 		
 		opts.setField("ui", opts.ui.string().toLowerCase());
 
 		if (opts.hasField("reporter"))
 			opts.setField("reporter", opts.reporter.string().toLowerCase());
-
-		trace(opts);
+			
 		untyped __js__("mocha.setup(opts)");
 	}
 	
