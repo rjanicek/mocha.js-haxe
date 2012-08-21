@@ -12,7 +12,7 @@ using js.mocha.Mocha;
  * @author Richard Janicek
  */
 
-class Main {
+class MainBrowser {
 	
 	static function main() {
 		

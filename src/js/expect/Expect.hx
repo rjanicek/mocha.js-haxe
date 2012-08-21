@@ -8,8 +8,20 @@ package js.expect;
  * @author Richard Janicek
  */
 class E {
+
+	private static var _expect : Dynamic;
+
+	static function __init__() {
+		if (untyped __js__("!(typeof expect === 'undefined')"))
+			_expect = untyped __js__("expect");
+		else if (untyped __js__("!(typeof require === 'undefined')"))
+			_expect = untyped __js__("require('expect.js')");
+		else
+			throw "make sure to include expect.js";
+	}
+	
 	public static function expect( actual : Dynamic ) : Expect {
-		return untyped __js__("expect(actual)");
+		return _expect(actual);
 	}
 	
 	/**
@@ -19,13 +31,14 @@ class E {
 	 * @example true.should().be.ok();
 	 */
 	public static function should( actual : Dynamic ) : Expect {
-		return untyped __js__("expect(actual)");
+		return _expect(actual);
 	}
 	
 	public static var version( getVersion, never ) : String;
 	private static function getVersion() : String {
-		return untyped __js__("expect.version");
+		return _expect.version;
 	}
+
 }
 
 typedef Expect = {

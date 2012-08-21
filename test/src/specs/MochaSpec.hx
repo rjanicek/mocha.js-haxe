@@ -1,5 +1,4 @@
 package specs;
-import haxe.Timer;
 import js.expect.Expect;
 import js.Lib;
 import js.mocha.Mocha;
