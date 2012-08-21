@@ -82,10 +82,10 @@ var Main = function() { }
 Main.__name__ = true;
 Main.main = function() {
 	if(haxe.Firebug.detect()) haxe.Firebug.redirectTraces();
-	js.Mocha.setup({ ui : js.Ui.BDD});
+	js.mocha.Mocha.setup({ ui : js.mocha.Ui.BDD});
 	new specs.MochaSpec();
 	new specs.ExpectSpec();
-	js.Mocha.run();
+	js.mocha.Mocha.run();
 }
 var Reflect = function() { }
 Reflect.__name__ = true;
@@ -392,29 +392,6 @@ js.Boot.__instanceof = function(o,cl) {
 js.Boot.__cast = function(o,t) {
 	if(js.Boot.__instanceof(o,t)) return o; else throw "Cannot cast " + Std.string(o) + " to " + Std.string(t);
 }
-js.E = function() { }
-js.E.__name__ = true;
-js.E.__properties__ = {get_version:"getVersion"}
-js.E.expect = function(actual) {
-	return expect(actual);
-}
-js.E.should = function(actual) {
-	return expect(actual);
-}
-js.E.getVersion = function() {
-	return expect.version;
-}
-js.ExpectMixins = function() { }
-js.ExpectMixins.__name__ = true;
-js.ExpectMixins.toBe = function(e,expected) {
-	return e.be(expected);
-}
-js.ExpectMixins.match = function(e,pattern,modifiers) {
-	return e.match(new RegExp(pattern,modifiers));
-}
-js.ExpectMixins.throwExceptionMatch = function(e,pattern,modifiers) {
-	return e.throwException(new RegExp(pattern,modifiers));
-}
 js.Lib = function() { }
 js.Lib.__name__ = true;
 js.Lib.debug = function() {
@@ -423,197 +400,222 @@ js.Lib.debug = function() {
 js.Lib.alert = function(v) {
 	alert(js.Boot.__string_rec(v,""));
 }
-js.Lib.eval = function(code) {
+js.Lib["eval"] = function(code) {
 	return eval(code);
 }
 js.Lib.setErrorHandler = function(f) {
 	js.Lib.onerror = f;
 }
-js.Ui = { __ename__ : true, __constructs__ : ["BDD","EXPORTS","QUNIT","TDD"] }
-js.Ui.BDD = ["BDD",0];
-js.Ui.BDD.toString = $estr;
-js.Ui.BDD.__enum__ = js.Ui;
-js.Ui.EXPORTS = ["EXPORTS",1];
-js.Ui.EXPORTS.toString = $estr;
-js.Ui.EXPORTS.__enum__ = js.Ui;
-js.Ui.QUNIT = ["QUNIT",2];
-js.Ui.QUNIT.toString = $estr;
-js.Ui.QUNIT.__enum__ = js.Ui;
-js.Ui.TDD = ["TDD",3];
-js.Ui.TDD.toString = $estr;
-js.Ui.TDD.__enum__ = js.Ui;
-js.Reporter = { __ename__ : true, __constructs__ : ["DOC","DOT","HTML","HTMLCOV","JSON","JSONCOV","JSONSTREAM","LANDING","LIST","MIN","NYAN","PROGRESS","SPEC","TAP","TEAMCITY","XUNIT"] }
-js.Reporter.DOC = ["DOC",0];
-js.Reporter.DOC.toString = $estr;
-js.Reporter.DOC.__enum__ = js.Reporter;
-js.Reporter.DOT = ["DOT",1];
-js.Reporter.DOT.toString = $estr;
-js.Reporter.DOT.__enum__ = js.Reporter;
-js.Reporter.HTML = ["HTML",2];
-js.Reporter.HTML.toString = $estr;
-js.Reporter.HTML.__enum__ = js.Reporter;
-js.Reporter.HTMLCOV = ["HTMLCOV",3];
-js.Reporter.HTMLCOV.toString = $estr;
-js.Reporter.HTMLCOV.__enum__ = js.Reporter;
-js.Reporter.JSON = ["JSON",4];
-js.Reporter.JSON.toString = $estr;
-js.Reporter.JSON.__enum__ = js.Reporter;
-js.Reporter.JSONCOV = ["JSONCOV",5];
-js.Reporter.JSONCOV.toString = $estr;
-js.Reporter.JSONCOV.__enum__ = js.Reporter;
-js.Reporter.JSONSTREAM = ["JSONSTREAM",6];
-js.Reporter.JSONSTREAM.toString = $estr;
-js.Reporter.JSONSTREAM.__enum__ = js.Reporter;
-js.Reporter.LANDING = ["LANDING",7];
-js.Reporter.LANDING.toString = $estr;
-js.Reporter.LANDING.__enum__ = js.Reporter;
-js.Reporter.LIST = ["LIST",8];
-js.Reporter.LIST.toString = $estr;
-js.Reporter.LIST.__enum__ = js.Reporter;
-js.Reporter.MIN = ["MIN",9];
-js.Reporter.MIN.toString = $estr;
-js.Reporter.MIN.__enum__ = js.Reporter;
-js.Reporter.NYAN = ["NYAN",10];
-js.Reporter.NYAN.toString = $estr;
-js.Reporter.NYAN.__enum__ = js.Reporter;
-js.Reporter.PROGRESS = ["PROGRESS",11];
-js.Reporter.PROGRESS.toString = $estr;
-js.Reporter.PROGRESS.__enum__ = js.Reporter;
-js.Reporter.SPEC = ["SPEC",12];
-js.Reporter.SPEC.toString = $estr;
-js.Reporter.SPEC.__enum__ = js.Reporter;
-js.Reporter.TAP = ["TAP",13];
-js.Reporter.TAP.toString = $estr;
-js.Reporter.TAP.__enum__ = js.Reporter;
-js.Reporter.TEAMCITY = ["TEAMCITY",14];
-js.Reporter.TEAMCITY.toString = $estr;
-js.Reporter.TEAMCITY.__enum__ = js.Reporter;
-js.Reporter.XUNIT = ["XUNIT",15];
-js.Reporter.XUNIT.toString = $estr;
-js.Reporter.XUNIT.__enum__ = js.Reporter;
-js.Mocha = function() { }
-js.Mocha.__name__ = true;
-js.Mocha.setup = function(opts) {
+if(!js.expect) js.expect = {}
+js.expect.E = function() { }
+js.expect.E.__name__ = true;
+js.expect.E.__properties__ = {get_version:"getVersion"}
+js.expect.E.expect = function(actual) {
+	return expect(actual);
+}
+js.expect.E.should = function(actual) {
+	return expect(actual);
+}
+js.expect.E.getVersion = function() {
+	return expect.version;
+}
+js.expect.ExpectMixins = function() { }
+js.expect.ExpectMixins.__name__ = true;
+js.expect.ExpectMixins.toBe = function(e,expected) {
+	return e.be(expected);
+}
+js.expect.ExpectMixins.match = function(e,pattern,modifiers) {
+	return e.match(new RegExp(pattern,modifiers));
+}
+js.expect.ExpectMixins.throwExceptionMatch = function(e,pattern,modifiers) {
+	return e.throwException(new RegExp(pattern,modifiers));
+}
+if(!js.mocha) js.mocha = {}
+js.mocha.Ui = { __ename__ : true, __constructs__ : ["BDD","EXPORTS","QUNIT","TDD"] }
+js.mocha.Ui.BDD = ["BDD",0];
+js.mocha.Ui.BDD.toString = $estr;
+js.mocha.Ui.BDD.__enum__ = js.mocha.Ui;
+js.mocha.Ui.EXPORTS = ["EXPORTS",1];
+js.mocha.Ui.EXPORTS.toString = $estr;
+js.mocha.Ui.EXPORTS.__enum__ = js.mocha.Ui;
+js.mocha.Ui.QUNIT = ["QUNIT",2];
+js.mocha.Ui.QUNIT.toString = $estr;
+js.mocha.Ui.QUNIT.__enum__ = js.mocha.Ui;
+js.mocha.Ui.TDD = ["TDD",3];
+js.mocha.Ui.TDD.toString = $estr;
+js.mocha.Ui.TDD.__enum__ = js.mocha.Ui;
+js.mocha.Reporter = { __ename__ : true, __constructs__ : ["DOC","DOT","HTML","HTMLCOV","JSON","JSONCOV","JSONSTREAM","LANDING","LIST","MIN","NYAN","PROGRESS","SPEC","TAP","TEAMCITY","XUNIT"] }
+js.mocha.Reporter.DOC = ["DOC",0];
+js.mocha.Reporter.DOC.toString = $estr;
+js.mocha.Reporter.DOC.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.DOT = ["DOT",1];
+js.mocha.Reporter.DOT.toString = $estr;
+js.mocha.Reporter.DOT.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.HTML = ["HTML",2];
+js.mocha.Reporter.HTML.toString = $estr;
+js.mocha.Reporter.HTML.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.HTMLCOV = ["HTMLCOV",3];
+js.mocha.Reporter.HTMLCOV.toString = $estr;
+js.mocha.Reporter.HTMLCOV.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.JSON = ["JSON",4];
+js.mocha.Reporter.JSON.toString = $estr;
+js.mocha.Reporter.JSON.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.JSONCOV = ["JSONCOV",5];
+js.mocha.Reporter.JSONCOV.toString = $estr;
+js.mocha.Reporter.JSONCOV.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.JSONSTREAM = ["JSONSTREAM",6];
+js.mocha.Reporter.JSONSTREAM.toString = $estr;
+js.mocha.Reporter.JSONSTREAM.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.LANDING = ["LANDING",7];
+js.mocha.Reporter.LANDING.toString = $estr;
+js.mocha.Reporter.LANDING.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.LIST = ["LIST",8];
+js.mocha.Reporter.LIST.toString = $estr;
+js.mocha.Reporter.LIST.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.MIN = ["MIN",9];
+js.mocha.Reporter.MIN.toString = $estr;
+js.mocha.Reporter.MIN.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.NYAN = ["NYAN",10];
+js.mocha.Reporter.NYAN.toString = $estr;
+js.mocha.Reporter.NYAN.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.PROGRESS = ["PROGRESS",11];
+js.mocha.Reporter.PROGRESS.toString = $estr;
+js.mocha.Reporter.PROGRESS.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.SPEC = ["SPEC",12];
+js.mocha.Reporter.SPEC.toString = $estr;
+js.mocha.Reporter.SPEC.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.TAP = ["TAP",13];
+js.mocha.Reporter.TAP.toString = $estr;
+js.mocha.Reporter.TAP.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.TEAMCITY = ["TEAMCITY",14];
+js.mocha.Reporter.TEAMCITY.toString = $estr;
+js.mocha.Reporter.TEAMCITY.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.XUNIT = ["XUNIT",15];
+js.mocha.Reporter.XUNIT.toString = $estr;
+js.mocha.Reporter.XUNIT.__enum__ = js.mocha.Reporter;
+js.mocha.Mocha = function() { }
+js.mocha.Mocha.__name__ = true;
+js.mocha.Mocha.setup = function(opts) {
 	opts.ui = Std.string(opts.ui).toLowerCase();
 	if(Reflect.hasField(opts,"reporter")) opts.reporter = Std.string(opts.reporter).toLowerCase();
 	mocha.setup(opts);
 }
-js.Mocha.run = function() {
+js.mocha.Mocha.run = function() {
 	mocha.run();
 }
-js.M = function() { }
-js.M.__name__ = true;
-js.M.describe = function(description,spec) {
+js.mocha.M = function() { }
+js.mocha.M.__name__ = true;
+js.mocha.M.describe = function(description,spec) {
 	describe(description, spec);
 }
-js.M.it = function(description,func) {
+js.mocha.M.it = function(description,func) {
 	it(description, func);
 }
-js.M.before = function(func) {
+js.mocha.M.before = function(func) {
 	before(func);
 }
-js.M.after = function(func) {
+js.mocha.M.after = function(func) {
 	after(func);
 }
-js.M.beforeEach = function(func) {
+js.mocha.M.beforeEach = function(func) {
 	beforeEach(func);
 }
-js.M.afterEach = function(func) {
+js.mocha.M.afterEach = function(func) {
 	afterEach(func);
 }
-js.M.suite = function(description,suite) {
+js.mocha.M.suite = function(description,suite) {
 	suite(description, suite);
 }
-js.M.setup = function(func) {
+js.mocha.M.setup = function(func) {
 	setup(func);
 }
-js.M.test = function(description,test) {
+js.mocha.M.test = function(description,test) {
 	test(description, test);
 }
-js.M.teardown = function(func) {
+js.mocha.M.teardown = function(func) {
 	teardown(func);
 }
 var specs = specs || {}
 specs.ExpectSpec = function() {
-	js.M.describe("Expect",function() {
-		js.M.it("ok: asserts that the value is truthy or not",function() {
-			js.E.expect(1).to.be.ok();
-			js.E.expect(true).to.be.ok();
-			js.E.expect({ }).to.be.ok();
-			js.E.expect(0).to.not.be.ok();
+	js.mocha.M.describe("Expect",function() {
+		js.mocha.M.it("ok: asserts that the value is truthy or not",function() {
+			js.expect.E.expect(1).to.be.ok();
+			js.expect.E.expect(true).to.be.ok();
+			js.expect.E.expect({ }).to.be.ok();
+			js.expect.E.expect(0).to.not.be.ok();
 		});
-		js.M.it("be / equal: asserts === equality",function() {
-			js.ExpectMixins.toBe(js.E.expect(1),1);
-			js.E.expect(Math.NaN).not.to.equal(Math.NaN);
-			js.ExpectMixins.toBe(js.E.expect(1).not,true);
-			js.ExpectMixins.toBe(js.E.expect("1").not,1);
+		js.mocha.M.it("be / equal: asserts === equality",function() {
+			js.expect.ExpectMixins.toBe(js.expect.E.expect(1),1);
+			js.expect.E.expect(Math.NaN).not.to.equal(Math.NaN);
+			js.expect.ExpectMixins.toBe(js.expect.E.expect(1).not,true);
+			js.expect.ExpectMixins.toBe(js.expect.E.expect("1").not,1);
 		});
-		js.M.it("eql: asserts loose equality that works with objects",function() {
-			js.E.expect({ a : "b"}).to.eql({ a : "b"});
-			js.E.expect(1).to.eql("1");
+		js.mocha.M.it("eql: asserts loose equality that works with objects",function() {
+			js.expect.E.expect({ a : "b"}).to.eql({ a : "b"});
+			js.expect.E.expect(1).to.eql("1");
 		});
-		js.M.it("a/an: asserts typeof with support for array type and instanceof",function() {
-			js.E.expect(5).to.be.a("number");
-			js.E.expect([]).to.be.an("array");
-			js.E.expect([]).to.be.an("object");
-			js.E.expect({ }).to.be.an("object");
-			js.E.expect({ }).not.to.be.an("array");
+		js.mocha.M.it("a/an: asserts typeof with support for array type and instanceof",function() {
+			js.expect.E.expect(5).to.be.a("number");
+			js.expect.E.expect([]).to.be.an("array");
+			js.expect.E.expect([]).to.be.an("object");
+			js.expect.E.expect({ }).to.be.an("object");
+			js.expect.E.expect({ }).not.to.be.an("array");
 		});
-		js.M.it("match: asserts String regular expression match",function() {
-			js.ExpectMixins.match(js.E.expect(js.E.getVersion()).to,"[0-9]+\\.[0-9]+\\.[0-9]+");
+		js.mocha.M.it("match: asserts String regular expression match",function() {
+			js.expect.ExpectMixins.match(js.expect.E.expect(js.expect.E.getVersion()).to,"[0-9]+\\.[0-9]+\\.[0-9]+");
 		});
-		js.M.it("contain: asserts indexOf for an array or string",function() {
-			js.E.expect([1,2]).to.contain(1);
-			js.E.expect("hello world").to.contain("world");
+		js.mocha.M.it("contain: asserts indexOf for an array or string",function() {
+			js.expect.E.expect([1,2]).to.contain(1);
+			js.expect.E.expect("hello world").to.contain("world");
 		});
-		js.M.it("length: asserts array .length",function() {
-			js.E.expect([]).to.have.length(0);
-			js.E.expect([1,2,3]).to.have.length(3);
+		js.mocha.M.it("length: asserts array .length",function() {
+			js.expect.E.expect([]).to.have.length(0);
+			js.expect.E.expect([1,2,3]).to.have.length(3);
 		});
-		js.M.it("empty: asserts that an array is empty or not",function() {
-			js.E.expect([]).to.be.empty();
-			js.E.expect([1,2,3]).to.not.be.empty();
+		js.mocha.M.it("empty: asserts that an array is empty or not",function() {
+			js.expect.E.expect([]).to.be.empty();
+			js.expect.E.expect([1,2,3]).to.not.be.empty();
 		});
-		js.M.it("property: asserts presence of an own property (and value optionally)",function() {
-			js.E.expect({ a : null}).to.have.property("a");
-			js.E.expect({ a : "b"}).to.have.property("a","b");
+		js.mocha.M.it("property: asserts presence of an own property (and value optionally)",function() {
+			js.expect.E.expect({ a : null}).to.have.property("a");
+			js.expect.E.expect({ a : "b"}).to.have.property("a","b");
 		});
-		js.M.it("key/keys: asserts the presence of a key. Supports the only modifier",function() {
-			js.E.expect({ a : "b"}).to.have.key("a");
-			js.E.expect({ a : "b", c : "d"}).to.only.have.keys("a","c");
-			js.E.expect({ a : "b", c : "d"}).to.only.have.keys(["a","c"]);
+		js.mocha.M.it("key/keys: asserts the presence of a key. Supports the only modifier",function() {
+			js.expect.E.expect({ a : "b"}).to.have.key("a");
+			js.expect.E.expect({ a : "b", c : "d"}).to.only.have.keys("a","c");
+			js.expect.E.expect({ a : "b", c : "d"}).to.only.have.keys(["a","c"]);
 		});
-		js.M.it("throwException: asserts that the Function throws or not when called",function() {
-			js.E.expect(function() {
+		js.mocha.M.it("throwException: asserts that the Function throws or not when called",function() {
+			js.expect.E.expect(function() {
 				throw "knife";
 			}).to.throwException();
-			js.E.expect(function() {
+			js.expect.E.expect(function() {
 				throw "axe";
 			}).to.throwException(function(str) {
-				js.ExpectMixins.toBe(js.E.expect(str),"axe");
+				js.expect.ExpectMixins.toBe(js.expect.E.expect(str),"axe");
 			});
-			js.ExpectMixins.throwExceptionMatch(js.E.expect(function() {
+			js.expect.ExpectMixins.throwExceptionMatch(js.expect.E.expect(function() {
 				throw "grenade...BOOM!";
 			}).to,"grenade");
-			js.E.expect(function() {
+			js.expect.E.expect(function() {
 			}).to.not.throwException();
 		});
-		js.M.it("within: asserts a number within a range",function() {
-			js.E.expect(1).to.be.within(0,Math.POSITIVE_INFINITY);
+		js.mocha.M.it("within: asserts a number within a range",function() {
+			js.expect.E.expect(1).to.be.within(0,Math.POSITIVE_INFINITY);
 		});
-		js.M.it("greaterThan/above: asserts >",function() {
-			js.E.expect(3).to.be.above(0);
-			js.E.expect(5).to.be.greaterThan(3);
+		js.mocha.M.it("greaterThan/above: asserts >",function() {
+			js.expect.E.expect(3).to.be.above(0);
+			js.expect.E.expect(5).to.be.greaterThan(3);
 		});
-		js.M.it("lessThan/below: asserts <",function() {
-			js.E.expect(0).to.be.below(3);
-			js.E.expect(1).to.be.lessThan(3);
+		js.mocha.M.it("lessThan/below: asserts <",function() {
+			js.expect.E.expect(0).to.be.below(3);
+			js.expect.E.expect(1).to.be.lessThan(3);
 		});
-		js.M.it("should allow chaining with `and`",function() {
-			js.ExpectMixins.toBe(js.E.expect(5).to.be.a("number").and,5);
+		js.mocha.M.it("should allow chaining with `and`",function() {
+			js.expect.ExpectMixins.toBe(js.expect.E.expect(5).to.be.a("number").and,5);
 		});
-		js.M.it("should allow 'should' mixin grammer",function() {
-			js.E.should(true).be.ok();
+		js.mocha.M.it("should allow 'should' mixin grammer",function() {
+			js.expect.E.should(true).be.ok();
 		});
 	});
 };
@@ -622,72 +624,72 @@ specs.ExpectSpec.prototype = {
 	__class__: specs.ExpectSpec
 }
 specs.MochaSpec = function() {
-	js.M.describe("Mocha",function() {
-		js.M.it("should test synchronous code",function() {
-			js.E.should(true).be.ok();
+	js.mocha.M.describe("Mocha",function() {
+		js.mocha.M.it("should test synchronous code",function() {
+			js.expect.E.should(true).be.ok();
 		});
-		js.M.it("should test asynchronous code",function(done) {
+		js.mocha.M.it("should test asynchronous code",function(done) {
 			var mochaIsCool = 0;
 			haxe.Timer.delay(function() {
 				mochaIsCool++;
-				js.E.should(mochaIsCool).equal(1);
+				js.expect.E.should(mochaIsCool).equal(1);
 				done();
 			},250);
-			js.E.should(mochaIsCool).equal(0);
+			js.expect.E.should(mochaIsCool).equal(0);
 		});
-		js.M.it("should allow setting timeout",function(done) {
+		js.mocha.M.it("should allow setting timeout",function(done) {
 			this.timeout(5000);
 			haxe.Timer.delay(function() {
 				done();
 			},2500);
 		});
-		js.M.describe("hooks",function() {
+		js.mocha.M.describe("hooks",function() {
 			var before = false;
-			js.M.before(function() {
+			js.mocha.M.before(function() {
 				before = true;
 			});
 			var beforeAsync = false;
-			js.M.before(function(done) {
+			js.mocha.M.before(function(done) {
 				haxe.Timer.delay(function() {
 					beforeAsync = true;
 					done();
 				},250);
 			});
 			var after = false;
-			js.M.after(function() {
+			js.mocha.M.after(function() {
 				after = true;
 			});
-			js.M.describe("before / after",function() {
-				js.M.it("should run before tests",function() {
-					js.E.should(before).be.ok();
-					js.E.should(after).not.be.ok();
+			js.mocha.M.describe("before / after",function() {
+				js.mocha.M.it("should run before tests",function() {
+					js.expect.E.should(before).be.ok();
+					js.expect.E.should(after).not.be.ok();
 				});
-				js.M.it("should run before tests asynchronously",function() {
-					js.E.should(beforeAsync).be.ok();
+				js.mocha.M.it("should run before tests asynchronously",function() {
+					js.expect.E.should(beforeAsync).be.ok();
 				});
 			});
-			js.M.describe("beforeEach / afterEach",function() {
+			js.mocha.M.describe("beforeEach / afterEach",function() {
 				var beforeEach = false;
-				js.M.beforeEach(function() {
+				js.mocha.M.beforeEach(function() {
 					beforeEach = true;
 				});
 				var beforeEachAsync = false;
-				js.M.beforeEach(function(done) {
+				js.mocha.M.beforeEach(function(done) {
 					haxe.Timer.delay(function() {
 						beforeEachAsync = true;
 						done();
 					},250);
 				});
 				var afterEach = false;
-				js.M.afterEach(function() {
+				js.mocha.M.afterEach(function() {
 					afterEach = true;
 				});
-				js.M.it("should run before each test",function() {
-					js.E.should(beforeEach).be.ok();
-					js.E.should(afterEach).not.be.ok();
+				js.mocha.M.it("should run before each test",function() {
+					js.expect.E.should(beforeEach).be.ok();
+					js.expect.E.should(afterEach).not.be.ok();
 				});
-				js.M.it("should run before each test asynchronously",function() {
-					js.E.should(beforeEachAsync).be.ok();
+				js.mocha.M.it("should run before each test asynchronously",function() {
+					js.expect.E.should(beforeEachAsync).be.ok();
 				});
 			});
 		});
