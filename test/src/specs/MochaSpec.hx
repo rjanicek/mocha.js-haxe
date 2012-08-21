@@ -1,11 +1,11 @@
 package specs;
 import haxe.Timer;
-import js.Expect;
+import js.expect.Expect;
 import js.Lib;
-import js.Mocha;
+import js.mocha.Mocha;
 
-using js.Expect;
-using js.Mocha;
+using js.expect.Expect;
+using js.mocha.Mocha;
 
 /**
  * @author Richard Janicek

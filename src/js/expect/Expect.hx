@@ -1,8 +1,10 @@
-package js;
+package js.expect;
 
 /**
- * Haxe bindings for expect.js - Minimalistic BDD-style assertions for Node.JS and the browser.
- * @see <a href="https://github.com/LearnBoost/expect.js">https://github.com/LearnBoost/expect.js</a>
+ * Haxe bindings for expect.js - Minimalistic BDD-style assertions for Node.JS
+ * and the browser.
+ *
+ * @see https://github.com/LearnBoost/expect.js
  * @author Richard Janicek
  */
 class E {
@@ -11,8 +13,10 @@ class E {
 	}
 	
 	/**
-	 * A clever alias for expect so the library can be used in mix-in mode using "should" grammer.
-	 * Example: true.should().be.ok();
+	 * A clever alias for expect so the library can be used in mix-in mode
+	 * using "should" grammer.
+	 *
+	 * @example true.should().be.ok();
 	 */
 	public static function should( actual : Dynamic ) : Expect {
 		return untyped __js__("expect(actual)");

@@ -1,9 +1,9 @@
 package specs;
-import js.Expect;
+import js.expect.Expect;
 import js.Lib;
-import js.Mocha;
+import js.mocha.Mocha;
 
-using js.Expect;
+using js.expect.Expect;
 
 /**
  * ...

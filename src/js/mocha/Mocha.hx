@@ -1,6 +1,6 @@
-package js;
+package js.mocha;
 
-using js.Mocha;
+using js.mocha.Mocha;
 using Reflect;
 using Std;
 
@@ -31,11 +31,15 @@ enum Reporter {
 }
 
 /**
- * Haxe bindings for Mocha.js - simple, flexible, fun javascript test framework for node.js & the browser. (BDD, TDD, QUnit styles via interfaces)
- * @see <a href="https://github.com/visionmedia/mocha">https://github.com/visionmedia/mocha</a>
+ * Haxe bindings for Mocha.js - simple, flexible, fun javascript test
+ * framework for node.js & the browser. (BDD, TDD, QUnit styles via
+ * interfaces)
+ *
+ * @see https://github.com/visionmedia/mocha
  * @author Richard Janicek
  */
 class Mocha {
+
 	/**
 	 * Setup mocha with options.
 	 * -reporter does not work in browser, HTML is used by default
@@ -51,6 +55,9 @@ class Mocha {
 		untyped __js__("mocha.setup(opts)");
 	}
 	
+	/**
+	 * Run tests.
+	 */
 	public static function run() : Void {
 		untyped __js__("mocha.run()");
 	}
@@ -59,8 +66,10 @@ class Mocha {
 @:native("this")
 extern class This {
 	/**
-	 * set test-specific timeouts, or disable the timeout all-together with timeout(0).
-	 * @param	milliseconds timeout in milliseconds or 0 to disable the timeout
+	 * Set test-specific timeouts, or disable the timeout all-together with
+	 * timeout(0).
+	 *
+	 * milliseconds 	timeout in milliseconds or 0 to disable the timeout
 	 */
 	public static function timeout( milliseconds : Int ) : Void; 
 }

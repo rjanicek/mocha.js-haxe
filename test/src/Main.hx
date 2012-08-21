@@ -1,11 +1,11 @@
 package;
 
 import haxe.Firebug;
-import js.Mocha;
+import js.mocha.Mocha;
 import specs.ExpectSpec;
 import specs.MochaSpec;
 
-using js.Mocha;
+using js.mocha.Mocha;
 
 /**
  * ...
