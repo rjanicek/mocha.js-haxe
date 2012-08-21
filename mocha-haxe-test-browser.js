@@ -78,9 +78,9 @@ IntIter.prototype = {
 	}
 	,__class__: IntIter
 }
-var Main = function() { }
-Main.__name__ = true;
-Main.main = function() {
+var MainBrowser = function() { }
+MainBrowser.__name__ = true;
+MainBrowser.main = function() {
 	if(haxe.Firebug.detect()) haxe.Firebug.redirectTraces();
 	js.mocha.Mocha.setup({ ui : js.mocha.Ui.BDD});
 	new specs.MochaSpec();
@@ -221,40 +221,6 @@ haxe.Log.trace = function(v,infos) {
 }
 haxe.Log.clear = function() {
 	js.Boot.__clear_trace();
-}
-haxe.Timer = function(time_ms) {
-	var me = this;
-	this.id = window.setInterval(function() {
-		me.run();
-	},time_ms);
-};
-haxe.Timer.__name__ = true;
-haxe.Timer.delay = function(f,time_ms) {
-	var t = new haxe.Timer(time_ms);
-	t.run = function() {
-		t.stop();
-		f();
-	};
-	return t;
-}
-haxe.Timer.measure = function(f,pos) {
-	var t0 = haxe.Timer.stamp();
-	var r = f();
-	haxe.Log.trace(haxe.Timer.stamp() - t0 + "s",pos);
-	return r;
-}
-haxe.Timer.stamp = function() {
-	return new Date().getTime() / 1000;
-}
-haxe.Timer.prototype = {
-	run: function() {
-	}
-	,stop: function() {
-		if(this.id == null) return;
-		window.clearInterval(this.id);
-		this.id = null;
-	}
-	,__class__: haxe.Timer
 }
 var js = js || {}
 js.Boot = function() { }
@@ -400,7 +366,7 @@ js.Lib.debug = function() {
 js.Lib.alert = function(v) {
 	alert(js.Boot.__string_rec(v,""));
 }
-js.Lib["eval"] = function(code) {
+js.Lib.eval = function(code) {
 	return eval(code);
 }
 js.Lib.setErrorHandler = function(f) {
@@ -411,13 +377,13 @@ js.expect.E = function() { }
 js.expect.E.__name__ = true;
 js.expect.E.__properties__ = {get_version:"getVersion"}
 js.expect.E.expect = function(actual) {
-	return expect(actual);
+	return js.expect.E._expect(actual);
 }
 js.expect.E.should = function(actual) {
-	return expect(actual);
+	return js.expect.E._expect(actual);
 }
 js.expect.E.getVersion = function() {
-	return expect.version;
+	return js.expect.E._expect.version;
 }
 js.expect.ExpectMixins = function() { }
 js.expect.ExpectMixins.__name__ = true;
@@ -630,7 +596,7 @@ specs.MochaSpec = function() {
 		});
 		js.mocha.M.it("should test asynchronous code",function(done) {
 			var mochaIsCool = 0;
-			haxe.Timer.delay(function() {
+			specs.Timer.delay(function() {
 				mochaIsCool++;
 				js.expect.E.should(mochaIsCool).equal(1);
 				done();
@@ -639,7 +605,7 @@ specs.MochaSpec = function() {
 		});
 		js.mocha.M.it("should allow setting timeout",function(done) {
 			this.timeout(5000);
-			haxe.Timer.delay(function() {
+			specs.Timer.delay(function() {
 				done();
 			},2500);
 		});
@@ -650,7 +616,7 @@ specs.MochaSpec = function() {
 			});
 			var beforeAsync = false;
 			js.mocha.M.before(function(done) {
-				haxe.Timer.delay(function() {
+				specs.Timer.delay(function() {
 					beforeAsync = true;
 					done();
 				},250);
@@ -675,7 +641,7 @@ specs.MochaSpec = function() {
 				});
 				var beforeEachAsync = false;
 				js.mocha.M.beforeEach(function(done) {
-					haxe.Timer.delay(function() {
+					specs.Timer.delay(function() {
 						beforeEachAsync = true;
 						done();
 					},250);
@@ -698,6 +664,11 @@ specs.MochaSpec = function() {
 specs.MochaSpec.__name__ = true;
 specs.MochaSpec.prototype = {
 	__class__: specs.MochaSpec
+}
+specs.Timer = function() { }
+specs.Timer.__name__ = true;
+specs.Timer.delay = function(f,delayMs) {
+	if(typeof setTimeout === 'undefined') window.setTimeout(f,delayMs); else setTimeout(f,delayMs);
 }
 if(Array.prototype.indexOf) HxOverrides.remove = function(a,o) {
 	var i = a.indexOf(o);
@@ -739,6 +710,7 @@ if(typeof window != "undefined") {
 		return f(msg,[url + ":" + line]);
 	};
 }
-Main.main();
+if(!(typeof expect === 'undefined')) js.expect.E._expect = expect; else if(!(typeof require === 'undefined')) js.expect.E._expect = require('expect.js'); else throw "make sure to include expect.js";
+MainBrowser.main();
 
-//@ sourceMappingURL=mocha-haxe-test.js.map
+//@ sourceMappingURL=mocha-haxe-test-browser.js.map
