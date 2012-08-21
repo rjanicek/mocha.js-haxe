@@ -72,5 +72,5 @@ class AsyncSpec {
 
 ##credits
 Heavily borrows from
-	should.js by TJ Holowaychuck - MIT.
+	mocha.js by TJ Holowaychuck - MIT.<br>
 	expect.js by Guillermo Rauch - MIT.
