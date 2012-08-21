@@ -7,8 +7,8 @@ Tested with Haxe 2.10, mocha.js 1.3.2, expect.js 1.2.0 and Chrome.
 GitHub -> https://github.com/rjanicek/mocha.js-haxe<br>
 Specs -> http://rjanicek.github.com/mocha.js-haxe<br>
 <br>
-mocha.js -> http://visionmedia.github.com/mocha<br>
-expect.js -> https://github.com/LearnBoost/expect.js<br>
+mocha.js by TJ Holowaychuck - MIT. -> http://visionmedia.github.com/mocha<br>
+expect.js by Guillermo Rauch - MIT. -> https://github.com/LearnBoost/expect.js<br>
 
 Use [test](https://github.com/rjanicek/mocha.js-haxe/tree/master/test) as a template for new projects.
 	
@@ -69,8 +69,3 @@ class AsyncSpec {
 	}
 }
 ```
-
-##credits
-Heavily borrows from
-	mocha.js by TJ Holowaychuck - MIT.<br>
-	expect.js by Guillermo Rauch - MIT.
