@@ -467,7 +467,13 @@ js.mocha.Mocha.setup = function(opts) {
 	mocha.setup(opts);
 }
 js.mocha.Mocha.run = function() {
+	js.mocha.Mocha.patchString();
 	mocha.run();
+}
+js.mocha.Mocha.patchString = function() {
+	if(!String.prototype.trim) String.prototype.trim = function() {
+		return this.replace(/^\s+|\s+$/g,'');
+	};
 }
 js.mocha.M = function() { }
 js.mocha.M.__name__ = true;
@@ -710,7 +716,7 @@ if(typeof window != "undefined") {
 		return f(msg,[url + ":" + line]);
 	};
 }
-if(!(typeof expect === 'undefined')) js.expect.E._expect = expect; else if(!(typeof require === 'undefined')) js.expect.E._expect = require('expect.js'); else throw "make sure to include expect.js";
+if(typeof expect !== 'undefined') js.expect.E._expect = expect; else if(typeof require !== 'undefined') js.expect.E._expect = require('expect.js'); else throw "make sure to include expect.js";
 MainBrowser.main();
 
 //@ sourceMappingURL=mocha-haxe-test-browser.js.map
