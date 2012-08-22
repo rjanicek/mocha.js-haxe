@@ -44,8 +44,9 @@ class Mocha {
 	 * Setup mocha with options.
 	 * -reporter does not work in browser, HTML is used by default
 	 * -grep is broken in browser
+	 * @param timeout in milliseconds (optional)
 	 */
-	public static function setup( opts : {ui : Ui, ?reporter : Reporter, ?globals : Array<String>, ?timeout /*milliseconds*/ : Int, ?ignoreLeaks : Bool, ?grep : String} ):Void {
+	public static function setup( opts : {ui : Ui, ?reporter : Reporter, ?globals : Array<String>, ?timeout : Int, ?ignoreLeaks : Bool, ?grep : String} ) : Void {
 		
 		opts.setField("ui", opts.ui.string().toLowerCase());
 
@@ -59,7 +60,20 @@ class Mocha {
 	 * Run tests.
 	 */
 	public static function run() : Void {
+		patchString();
 		untyped __js__("mocha.run()");
+	}
+	
+	/**
+	 * trim() error in <= IE8
+	 * @see https://github.com/visionmedia/mocha/issues/501
+	 */
+	public static function patchString() untyped {
+		if(!String.prototype.trim) {
+			String.prototype.trim = function () {
+				return __js__("this.replace(/^\\s+|\\s+$/g,'')");
+			};  
+		} 	
 	}
 }
 
@@ -69,7 +83,7 @@ extern class This {
 	 * Set test-specific timeouts, or disable the timeout all-together with
 	 * timeout(0).
 	 *
-	 * milliseconds 	timeout in milliseconds or 0 to disable the timeout
+	 * @param milliseconds timeout in milliseconds or 0 to disable the timeout
 	 */
 	public static function timeout( milliseconds : Int ) : Void; 
 }

@@ -11,11 +11,11 @@ class E {
 
 	private static var _expect : Dynamic;
 
-	static function __init__() {
-		if (untyped __js__("!(typeof expect === 'undefined')"))
-			_expect = untyped __js__("expect");
-		else if (untyped __js__("!(typeof require === 'undefined')"))
-			_expect = untyped __js__("require('expect.js')");
+	static function __init__() untyped {
+		if (__js__("typeof expect !== 'undefined'"))
+			_expect = __js__("expect");
+		else if (__js__("typeof require !== 'undefined'"))
+			_expect = __js__("require('expect.js')");
 		else
 			throw "make sure to include expect.js";
 	}
