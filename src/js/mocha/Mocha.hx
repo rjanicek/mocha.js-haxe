@@ -62,21 +62,9 @@ class Mocha {
 	 * Run tests.
 	 */
 	public static function run() : Void {
-		patchString();
 		_mocha.run();
 	}
 	
-	/**
-	 * trim() error in <= IE8
-	 * @see https://github.com/visionmedia/mocha/issues/501
-	 */
-	public static function patchString() untyped {
-		if(!String.prototype.trim) {
-			String.prototype.trim = function () {
-				return __js__("this.replace(/^\\s+|\\s+$/g,'')");
-			};  
-		} 	
-	}
 }
 
 @:native("this")
@@ -99,9 +87,39 @@ class M {
 		untyped __js__("describe(description, spec)");
 	}
 
+	/**
+	 * Only run these tests.
+	 */
+	public static function describeOnly( description : String, spec : Void -> Void ) : Void {
+		untyped __js__("describe.only(description, spec)");
+	}
+
+	/**
+	 * Skip these tests.
+	 */
+	public static function describeSkip( description : String, spec : Void -> Void ) : Void {
+		untyped __js__("describe.skip(description, spec)");
+	}
+
 	@:overload(function( description : String, func : (Void->Void)->Void ) : Void{})
 	public static function it( description : String, func : Void -> Void ) : Void {
 		untyped __js__("it(description, func)");
+	}
+
+	/**
+	 * Only run this test.
+	 */
+	@:overload(function( description : String, func : (Void->Void)->Void ) : Void{})
+	public static function itOnly( description : String, func : Void -> Void ) : Void {
+		untyped __js__("it.only(description, func)");
+	}
+
+	/**
+	 * Skip this test.
+	 */
+	@:overload(function( description : String, func : (Void->Void)->Void ) : Void{})
+	public static function itSkip( description : String, func : Void -> Void ) : Void {
+		untyped __js__("it.skip(description, func)");
 	}
 
 	@:overload(function( func : (Void->Void)->Void ) : Void{})
