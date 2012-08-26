@@ -40,6 +40,8 @@ enum Reporter {
  */
 class Mocha {
 
+	private static var _mocha : Dynamic = untyped __js__("mocha");
+	
 	/**
 	 * Setup mocha with options.
 	 * -reporter does not work in browser, HTML is used by default
@@ -53,7 +55,7 @@ class Mocha {
 		if (opts.hasField("reporter"))
 			opts.setField("reporter", opts.reporter.string().toLowerCase());
 			
-		untyped __js__("mocha.setup(opts)");
+		_mocha.setup(opts);
 	}
 	
 	/**
@@ -61,7 +63,7 @@ class Mocha {
 	 */
 	public static function run() : Void {
 		patchString();
-		untyped __js__("mocha.run()");
+		_mocha.run();
 	}
 	
 	/**
