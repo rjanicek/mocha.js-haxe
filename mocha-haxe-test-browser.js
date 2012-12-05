@@ -1,5 +1,83 @@
-(function () { "use strict";
 var $estr = function() { return js.Boot.__string_rec(this,''); };
+var HxOverrides = function() { }
+HxOverrides.__name__ = true;
+HxOverrides.dateStr = function(date) {
+	var m = date.getMonth() + 1;
+	var d = date.getDate();
+	var h = date.getHours();
+	var mi = date.getMinutes();
+	var s = date.getSeconds();
+	return date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d < 10?"0" + d:"" + d) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
+}
+HxOverrides.strDate = function(s) {
+	switch(s.length) {
+	case 8:
+		var k = s.split(":");
+		var d = new Date();
+		d.setTime(0);
+		d.setUTCHours(k[0]);
+		d.setUTCMinutes(k[1]);
+		d.setUTCSeconds(k[2]);
+		return d;
+	case 10:
+		var k = s.split("-");
+		return new Date(k[0],k[1] - 1,k[2],0,0,0);
+	case 19:
+		var k = s.split(" ");
+		var y = k[0].split("-");
+		var t = k[1].split(":");
+		return new Date(y[0],y[1] - 1,y[2],t[0],t[1],t[2]);
+	default:
+		throw "Invalid date format : " + s;
+	}
+}
+HxOverrides.cca = function(s,index) {
+	var x = s.charCodeAt(index);
+	if(x != x) return undefined;
+	return x;
+}
+HxOverrides.substr = function(s,pos,len) {
+	if(pos != null && pos != 0 && len != null && len < 0) return "";
+	if(len == null) len = s.length;
+	if(pos < 0) {
+		pos = s.length + pos;
+		if(pos < 0) pos = 0;
+	} else if(len < 0) len = s.length + len - pos;
+	return s.substr(pos,len);
+}
+HxOverrides.remove = function(a,obj) {
+	var i = 0;
+	var l = a.length;
+	while(i < l) {
+		if(a[i] == obj) {
+			a.splice(i,1);
+			return true;
+		}
+		i++;
+	}
+	return false;
+}
+HxOverrides.iter = function(a) {
+	return { cur : 0, arr : a, hasNext : function() {
+		return this.cur < this.arr.length;
+	}, next : function() {
+		return this.arr[this.cur++];
+	}};
+}
+var IntIter = function(min,max) {
+	this.min = min;
+	this.max = max;
+};
+IntIter.__name__ = true;
+IntIter.prototype = {
+	next: function() {
+		return this.min++;
+	}
+	,hasNext: function() {
+		return this.min < this.max;
+	}
+	,__class__: IntIter
+}
 var MainBrowser = function() { }
 MainBrowser.__name__ = true;
 MainBrowser.main = function() {
@@ -14,12 +92,99 @@ Reflect.__name__ = true;
 Reflect.hasField = function(o,field) {
 	return Object.prototype.hasOwnProperty.call(o,field);
 }
+Reflect.field = function(o,field) {
+	var v = null;
+	try {
+		v = o[field];
+	} catch( e ) {
+	}
+	return v;
+}
+Reflect.setField = function(o,field,value) {
+	o[field] = value;
+}
+Reflect.getProperty = function(o,field) {
+	var tmp;
+	return o == null?null:o.__properties__ && (tmp = o.__properties__["get_" + field])?o[tmp]():o[field];
+}
+Reflect.setProperty = function(o,field,value) {
+	var tmp;
+	if(o.__properties__ && (tmp = o.__properties__["set_" + field])) o[tmp](value); else o[field] = value;
+}
+Reflect.callMethod = function(o,func,args) {
+	return func.apply(o,args);
+}
+Reflect.fields = function(o) {
+	var a = [];
+	if(o != null) {
+		var hasOwnProperty = Object.prototype.hasOwnProperty;
+		for( var f in o ) {
+		if(hasOwnProperty.call(o,f)) a.push(f);
+		}
+	}
+	return a;
+}
+Reflect.isFunction = function(f) {
+	return typeof(f) == "function" && !(f.__name__ || f.__ename__);
+}
+Reflect.compare = function(a,b) {
+	return a == b?0:a > b?1:-1;
+}
+Reflect.compareMethods = function(f1,f2) {
+	if(f1 == f2) return true;
+	if(!Reflect.isFunction(f1) || !Reflect.isFunction(f2)) return false;
+	return f1.scope == f2.scope && f1.method == f2.method && f1.method != null;
+}
+Reflect.isObject = function(v) {
+	if(v == null) return false;
+	var t = typeof(v);
+	return t == "string" || t == "object" && !v.__enum__ || t == "function" && (v.__name__ || v.__ename__);
+}
+Reflect.deleteField = function(o,f) {
+	if(!Reflect.hasField(o,f)) return false;
+	delete(o[f]);
+	return true;
+}
+Reflect.copy = function(o) {
+	var o2 = { };
+	var _g = 0, _g1 = Reflect.fields(o);
+	while(_g < _g1.length) {
+		var f = _g1[_g];
+		++_g;
+		o2[f] = Reflect.field(o,f);
+	}
+	return o2;
+}
+Reflect.makeVarArgs = function(f) {
+	return function() {
+		var a = Array.prototype.slice.call(arguments);
+		return f(a);
+	};
+}
 var Std = function() { }
 Std.__name__ = true;
+Std["is"] = function(v,t) {
+	return js.Boot.__instanceof(v,t);
+}
 Std.string = function(s) {
 	return js.Boot.__string_rec(s,"");
 }
-var haxe = {}
+Std["int"] = function(x) {
+	return x | 0;
+}
+Std.parseInt = function(x) {
+	var v = parseInt(x,10);
+	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
+	if(isNaN(v)) return null;
+	return v;
+}
+Std.parseFloat = function(x) {
+	return parseFloat(x);
+}
+Std.random = function(x) {
+	return Math.floor(Math.random() * x);
+}
+var haxe = haxe || {}
 haxe.Firebug = function() { }
 haxe.Firebug.__name__ = true;
 haxe.Firebug.detect = function() {
@@ -54,7 +219,10 @@ haxe.Log.__name__ = true;
 haxe.Log.trace = function(v,infos) {
 	js.Boot.__trace(v,infos);
 }
-var js = {}
+haxe.Log.clear = function() {
+	js.Boot.__clear_trace();
+}
+var js = js || {}
 js.Boot = function() { }
 js.Boot.__name__ = true;
 js.Boot.__unhtml = function(s) {
@@ -65,6 +233,19 @@ js.Boot.__trace = function(v,i) {
 	msg += js.Boot.__string_rec(v,"");
 	var d;
 	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js.Boot.__unhtml(msg) + "<br/>"; else if(typeof(console) != "undefined" && console.log != null) console.log(msg);
+}
+js.Boot.__clear_trace = function() {
+	var d = document.getElementById("haxe:trace");
+	if(d != null) d.innerHTML = "";
+}
+js.Boot.isClass = function(o) {
+	return o.__name__;
+}
+js.Boot.isEnum = function(e) {
+	return e.__ename__;
+}
+js.Boot.getClass = function(o) {
+	return o.__class__;
 }
 js.Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
@@ -132,11 +313,69 @@ js.Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 }
+js.Boot.__interfLoop = function(cc,cl) {
+	if(cc == null) return false;
+	if(cc == cl) return true;
+	var intf = cc.__interfaces__;
+	if(intf != null) {
+		var _g1 = 0, _g = intf.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var i1 = intf[i];
+			if(i1 == cl || js.Boot.__interfLoop(i1,cl)) return true;
+		}
+	}
+	return js.Boot.__interfLoop(cc.__super__,cl);
+}
+js.Boot.__instanceof = function(o,cl) {
+	try {
+		if(o instanceof cl) {
+			if(cl == Array) return o.__enum__ == null;
+			return true;
+		}
+		if(js.Boot.__interfLoop(o.__class__,cl)) return true;
+	} catch( e ) {
+		if(cl == null) return false;
+	}
+	switch(cl) {
+	case Int:
+		return Math.ceil(o%2147483648.0) === o;
+	case Float:
+		return typeof(o) == "number";
+	case Bool:
+		return o === true || o === false;
+	case String:
+		return typeof(o) == "string";
+	case Dynamic:
+		return true;
+	default:
+		if(o == null) return false;
+		if(cl == Class && o.__name__ != null) return true; else null;
+		if(cl == Enum && o.__ename__ != null) return true; else null;
+		return o.__enum__ == cl;
+	}
+}
+js.Boot.__cast = function(o,t) {
+	if(js.Boot.__instanceof(o,t)) return o; else throw "Cannot cast " + Std.string(o) + " to " + Std.string(t);
+}
 js.Lib = function() { }
 js.Lib.__name__ = true;
-js.expect = {}
+js.Lib.debug = function() {
+	debugger;
+}
+js.Lib.alert = function(v) {
+	alert(js.Boot.__string_rec(v,""));
+}
+js.Lib.eval = function(code) {
+	return eval(code);
+}
+js.Lib.setErrorHandler = function(f) {
+	js.Lib.onerror = f;
+}
+if(!js.expect) js.expect = {}
 js.expect.E = function() { }
 js.expect.E.__name__ = true;
+js.expect.E.__properties__ = {get_version:"getVersion"}
 js.expect.E.expect = function(actual) {
 	return js.expect.E._expect(actual);
 }
@@ -157,7 +396,7 @@ js.expect.ExpectMixins.match = function(e,pattern,modifiers) {
 js.expect.ExpectMixins.throwExceptionMatch = function(e,pattern,modifiers) {
 	return e.throwException(new RegExp(pattern,modifiers));
 }
-js.mocha = {}
+if(!js.mocha) js.mocha = {}
 js.mocha.Ui = { __ename__ : true, __constructs__ : ["BDD","EXPORTS","QUNIT","TDD"] }
 js.mocha.Ui.BDD = ["BDD",0];
 js.mocha.Ui.BDD.toString = $estr;
@@ -171,6 +410,55 @@ js.mocha.Ui.QUNIT.__enum__ = js.mocha.Ui;
 js.mocha.Ui.TDD = ["TDD",3];
 js.mocha.Ui.TDD.toString = $estr;
 js.mocha.Ui.TDD.__enum__ = js.mocha.Ui;
+js.mocha.Reporter = { __ename__ : true, __constructs__ : ["DOC","DOT","HTML","HTMLCOV","JSON","JSONCOV","JSONSTREAM","LANDING","LIST","MIN","NYAN","PROGRESS","SPEC","TAP","TEAMCITY","XUNIT"] }
+js.mocha.Reporter.DOC = ["DOC",0];
+js.mocha.Reporter.DOC.toString = $estr;
+js.mocha.Reporter.DOC.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.DOT = ["DOT",1];
+js.mocha.Reporter.DOT.toString = $estr;
+js.mocha.Reporter.DOT.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.HTML = ["HTML",2];
+js.mocha.Reporter.HTML.toString = $estr;
+js.mocha.Reporter.HTML.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.HTMLCOV = ["HTMLCOV",3];
+js.mocha.Reporter.HTMLCOV.toString = $estr;
+js.mocha.Reporter.HTMLCOV.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.JSON = ["JSON",4];
+js.mocha.Reporter.JSON.toString = $estr;
+js.mocha.Reporter.JSON.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.JSONCOV = ["JSONCOV",5];
+js.mocha.Reporter.JSONCOV.toString = $estr;
+js.mocha.Reporter.JSONCOV.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.JSONSTREAM = ["JSONSTREAM",6];
+js.mocha.Reporter.JSONSTREAM.toString = $estr;
+js.mocha.Reporter.JSONSTREAM.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.LANDING = ["LANDING",7];
+js.mocha.Reporter.LANDING.toString = $estr;
+js.mocha.Reporter.LANDING.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.LIST = ["LIST",8];
+js.mocha.Reporter.LIST.toString = $estr;
+js.mocha.Reporter.LIST.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.MIN = ["MIN",9];
+js.mocha.Reporter.MIN.toString = $estr;
+js.mocha.Reporter.MIN.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.NYAN = ["NYAN",10];
+js.mocha.Reporter.NYAN.toString = $estr;
+js.mocha.Reporter.NYAN.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.PROGRESS = ["PROGRESS",11];
+js.mocha.Reporter.PROGRESS.toString = $estr;
+js.mocha.Reporter.PROGRESS.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.SPEC = ["SPEC",12];
+js.mocha.Reporter.SPEC.toString = $estr;
+js.mocha.Reporter.SPEC.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.TAP = ["TAP",13];
+js.mocha.Reporter.TAP.toString = $estr;
+js.mocha.Reporter.TAP.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.TEAMCITY = ["TEAMCITY",14];
+js.mocha.Reporter.TEAMCITY.toString = $estr;
+js.mocha.Reporter.TEAMCITY.__enum__ = js.mocha.Reporter;
+js.mocha.Reporter.XUNIT = ["XUNIT",15];
+js.mocha.Reporter.XUNIT.toString = $estr;
+js.mocha.Reporter.XUNIT.__enum__ = js.mocha.Reporter;
 js.mocha.Mocha = function() { }
 js.mocha.Mocha.__name__ = true;
 js.mocha.Mocha.setup = function(opts) {
@@ -186,8 +474,20 @@ js.mocha.M.__name__ = true;
 js.mocha.M.describe = function(description,spec) {
 	describe(description, spec);
 }
+js.mocha.M.describeOnly = function(description,spec) {
+	describe.only(description, spec);
+}
+js.mocha.M.describeSkip = function(description,spec) {
+	describe.skip(description, spec);
+}
 js.mocha.M.it = function(description,func) {
 	it(description, func);
+}
+js.mocha.M.itOnly = function(description,func) {
+	it.only(description, func);
+}
+js.mocha.M.itSkip = function(description,func) {
+	it.skip(description, func);
 }
 js.mocha.M.before = function(func) {
 	before(func);
@@ -201,10 +501,19 @@ js.mocha.M.beforeEach = function(func) {
 js.mocha.M.afterEach = function(func) {
 	afterEach(func);
 }
+js.mocha.M.suite = function(description,suite) {
+	suite(description, suite);
+}
 js.mocha.M.setup = function(func) {
 	setup(func);
 }
-var specs = {}
+js.mocha.M.test = function(description,test) {
+	test(description, test);
+}
+js.mocha.M.teardown = function(func) {
+	teardown(func);
+}
+var specs = specs || {}
 specs.ExpectSpec = function() {
 	js.mocha.M.describe("Expect",function() {
 		js.mocha.M.it("ok: asserts that the value is truthy or not",function() {
@@ -289,6 +598,9 @@ specs.ExpectSpec = function() {
 	});
 };
 specs.ExpectSpec.__name__ = true;
+specs.ExpectSpec.prototype = {
+	__class__: specs.ExpectSpec
+}
 specs.MochaSpec = function() {
 	js.mocha.M.describe("Mocha",function() {
 		js.mocha.M.it("should test synchronous code",function() {
@@ -362,11 +674,20 @@ specs.MochaSpec = function() {
 	});
 };
 specs.MochaSpec.__name__ = true;
+specs.MochaSpec.prototype = {
+	__class__: specs.MochaSpec
+}
 specs.Timer = function() { }
 specs.Timer.__name__ = true;
 specs.Timer.delay = function(f,delayMs) {
 	if(typeof setTimeout === 'undefined') window.setTimeout(f,delayMs); else setTimeout(f,delayMs);
 }
+if(Array.prototype.indexOf) HxOverrides.remove = function(a,o) {
+	var i = a.indexOf(o);
+	if(i == -1) return false;
+	a.splice(i,1);
+	return true;
+}; else null;
 Math.__name__ = ["Math"];
 Math.NaN = Number.NaN;
 Math.NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY;
@@ -377,8 +698,21 @@ Math.isFinite = function(i) {
 Math.isNaN = function(i) {
 	return isNaN(i);
 };
+String.prototype.__class__ = String;
 String.__name__ = true;
+Array.prototype.__class__ = Array;
 Array.__name__ = true;
+Date.prototype.__class__ = Date;
+Date.__name__ = ["Date"];
+var Int = { __name__ : ["Int"]};
+var Dynamic = { __name__ : ["Dynamic"]};
+var Float = Number;
+Float.__name__ = ["Float"];
+var Bool = Boolean;
+Bool.__ename__ = ["Bool"];
+var Class = { __name__ : ["Class"]};
+var Enum = { };
+var Void = { __ename__ : ["Void"]};
 if(typeof document != "undefined") js.Lib.document = document;
 if(typeof window != "undefined") {
 	js.Lib.window = window;
@@ -391,6 +725,5 @@ if(typeof window != "undefined") {
 if(typeof expect !== 'undefined') js.expect.E._expect = expect; else if(typeof require !== 'undefined') js.expect.E._expect = require('expect.js'); else throw "make sure to include expect.js";
 js.mocha.Mocha._mocha = mocha;
 MainBrowser.main();
-})();
 
 //@ sourceMappingURL=mocha-haxe-test-browser.js.map
