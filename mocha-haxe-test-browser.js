@@ -366,7 +366,7 @@ js.Lib.debug = function() {
 js.Lib.alert = function(v) {
 	alert(js.Boot.__string_rec(v,""));
 }
-js.Lib.eval = function(code) {
+js.Lib["eval"] = function(code) {
 	return eval(code);
 }
 js.Lib.setErrorHandler = function(f) {
@@ -468,6 +468,12 @@ js.mocha.Mocha.setup = function(opts) {
 }
 js.mocha.Mocha.run = function() {
 	js.mocha.Mocha._mocha.run();
+}
+js.mocha.Mocha.timeout = function(milliseconds) {
+	return js.mocha.Mocha._mocha.timeout(milliseconds);
+}
+js.mocha.Mocha.reporter = function(reporter) {
+	return js.mocha.Mocha._mocha.reporter(reporter);
 }
 js.mocha.M = function() { }
 js.mocha.M.__name__ = true;
