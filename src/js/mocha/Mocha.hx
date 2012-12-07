@@ -64,18 +64,51 @@ class Mocha {
 	public static function run() : Void {
 		_mocha.run();
 	}
-	
+
+	/**
+	 * timeout(>0) - set timeout in milliseconds
+	 * timeout("ms()") - set timeout using ms.js miliseconds conversion utility
+	 * timeout(0) - disable timeout
+	 * timeout() - get timeout
+	 */
+	@:overload(function() : Int{})
+	@:overload(function( ms : String ) : Mocha { } )
+	public static function timeout( milliseconds : Int ) : Mocha {
+		return _mocha.timeout(milliseconds);
+	}
+
+	/**
+	 * Specify the reporter to use.
+	 * @param	reporter Name of reporter to use.
+	 */
+	public static function reporter( reporter : String ) : Mocha {
+		return _mocha.reporter(reporter);
+	}
 }
 
 @:native("this")
 extern class This {
+
 	/**
-	 * Set test-specific timeouts, or disable the timeout all-together with
-	 * timeout(0).
-	 *
-	 * @param milliseconds timeout in milliseconds or 0 to disable the timeout
-	 */
+	 * test-specific timeouts
+	 * timeout(>0) - set timeout in milliseconds
+	 * timeout("ms()") - set timeout using ms.js miliseconds conversion utility
+	 * timeout(0) - disable timeout
+	 * timeout() - get timeout
+	 */	
+	@:overload(function() : Int{})
+	@:overload(function( ms : String ) : Void { } )
 	public static function timeout( milliseconds : Int ) : Void; 
+	
+	/**
+	 * Specify test-specific “slow” test threshold, defaulting to 75ms. Mocha uses this to highlight test-cases that are taking too long.
+	 * slow(>0) - set slow test threshold in milliseconds
+	 * slow("ms()") - set slow test threshold using ms.js miliseconds conversion utility
+	 * slow() - get slow test threshold
+	 */
+	@:overload(function() : Int{})
+	@:overload(function( ms : String ) : Void { } )
+	public static function slow( milliseconds : Int ) : Void;
 }
 
 class M {
