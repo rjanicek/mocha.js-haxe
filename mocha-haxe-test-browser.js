@@ -601,6 +601,16 @@ specs.ExpectSpec = function() {
 		js.mocha.M.it("should allow 'should' mixin grammer",function() {
 			js.expect.E.should(true).be.ok();
 		});
+		js.mocha.M.it("should explicitly fail",function() {
+			js.expect.E.should(function() {
+				js.expect.E.expect().fail();
+			}).throwException();
+		});
+		js.mocha.M.it("should explicitly fail with message",function() {
+			js.expect.ExpectMixins.throwExceptionMatch(js.expect.E.should(function() {
+				js.expect.E.expect().fail("you shall not pass!");
+			}),"you shall not pass!");
+		});
 	});
 };
 specs.ExpectSpec.__name__ = true;
