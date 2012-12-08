@@ -111,6 +111,14 @@ class ExpectSpec {
 				true.should().be.ok();
 			});
 			
+			M.it("should explicitly fail", function () {
+				(function() { E.expect().fail(); } ).should().throwException();
+			});
+			
+			M.it("should explicitly fail with message", function () {
+				(function() { E.expect().fail("you shall not pass!"); } ).should().throwExceptionMatch("you shall not pass!");
+			});
+			
 		});
 	}
 }

@@ -20,7 +20,7 @@ class E {
 			throw "make sure to include expect.js";
 	}
 	
-	public static function expect( actual : Dynamic ) : Expect {
+	public static function expect( ?actual : Dynamic ) : Expect {
 		return _expect(actual);
 	}
 	
@@ -30,7 +30,7 @@ class E {
 	 *
 	 * @example true.should().be.ok();
 	 */
-	public static function should( actual : Dynamic ) : Expect {
+	public static function should( ?actual : Dynamic ) : Expect {
 		return _expect(actual);
 	}
 	
@@ -88,6 +88,11 @@ typedef Expect = {
 	 * asserts === equality
 	 */
 	function equal( expected : Dynamic ) : Expect;
+	
+	/**
+	 * explicitly forces failure
+	 */
+	function fail( ?message : String ) : Expect;
 	
 	/**
 	 * asserts >
