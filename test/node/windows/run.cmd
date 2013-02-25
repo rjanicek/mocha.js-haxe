@@ -1,3 +1,3 @@
 cd ..
-call mocha mocha-haxe-test-node.js -R spec
+call mocha -R spec mocha-haxe-test-node.js
 pause

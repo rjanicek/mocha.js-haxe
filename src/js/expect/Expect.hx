@@ -34,8 +34,8 @@ class E {
 		return _expect(actual);
 	}
 	
-	public static var version( getVersion, never ) : String;
-	private static function getVersion() : String {
+	public static var version( get_version, never ) : String;
+	private static function get_version() : String {
 		return _expect.version;
 	}
 

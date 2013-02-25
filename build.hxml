@@ -2,8 +2,7 @@
 -cp test/src
 -js test/browser/mocha-haxe-test-browser.js
 -main MainBrowser
---js-modern
---dead-code-elimination
+-dce std
 -debug
 
 -cmd haxe build-node.hxml

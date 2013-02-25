@@ -1,6 +1,5 @@
 package;
 
-import haxe.Firebug;
 import js.mocha.Mocha;
 import specs.ExpectSpec;
 import specs.MochaSpec;
@@ -16,8 +15,6 @@ class MainBrowser {
 	
 	static function main() {
 		
-		if (Firebug.detect())
-			Firebug.redirectTraces();
 			
 		Mocha.setup( { ui: Ui.BDD } );
 		new MochaSpec();

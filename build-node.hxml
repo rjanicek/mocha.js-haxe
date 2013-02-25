@@ -2,6 +2,5 @@
 -cp test/src
 -js test/node/mocha-haxe-test-node.js
 -main MainNode
---js-modern
---dead-code-elimination
+-dce std
 -debug
