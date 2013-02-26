@@ -30,6 +30,16 @@ enum Reporter {
 	XUNIT;
 }
 
+typedef Options = {
+	ui : Ui,
+	?reporter : Reporter,
+	?globals : Array<String>,
+	?timeout : Int,
+	?ignoreLeaks : Bool,
+	?grep : String,
+	?bail : Bool
+}
+
 /**
  * Haxe bindings for Mocha.js - simple, flexible, fun javascript test
  * framework for node.js & the browser. (BDD, TDD, QUnit styles via
@@ -48,7 +58,7 @@ class Mocha {
 	 * -grep is broken in browser
 	 * @param timeout in milliseconds (optional)
 	 */
-	public static function setup( opts : {ui : Ui, ?reporter : Reporter, ?globals : Array<String>, ?timeout : Int, ?ignoreLeaks : Bool, ?grep : String} ) : Void {
+	public static function setup( opts : Options ) : Void {
 		
 		opts.setField("ui", opts.ui.string().toLowerCase());
 
@@ -83,6 +93,13 @@ class Mocha {
 	 */
 	public static function reporter( reporter : String ) : Mocha {
 		return _mocha.reporter(reporter);
+	}
+	
+	/**
+	 * Bail after first test failure.
+	 */
+	public static function bail() : Void {
+		_mocha.bail();
 	}
 }
 

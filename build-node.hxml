@@ -2,5 +2,5 @@
 -cp test/src
 -js test/node/mocha-haxe-test-node.js
 -main MainNode
--dce std
+-dce full
 -debug

@@ -2,11 +2,10 @@
 
 Haxe bindings for mocha.js & expect.js - simple, flexible, fun javascript test framework for node.js & the browser. (BDD, TDD, QUnit styles via interfaces)
 
-Tested with Haxe 2.10, mocha.js 1.7.4, expect.js 0.2.0, Node.js 0.8.15 and Chrome.
+Tested with Haxe 3.0, mocha.js 1.8.1, expect.js 0.2.0, Node.js and Chrome.
 
 GitHub -> https://github.com/rjanicek/mocha.js-haxe<br>
-Specs -> http://rjanicek.github.com/mocha.js-haxe<br>
-Richard Janicek -> http://www.janicek.co<br>
+browser tests -> http://rjanicek.github.com/mocha.js-haxe<br>
 mocha.js by TJ Holowaychuck - MIT. -> https://github.com/visionmedia/mocha<br>
 expect.js by Guillermo Rauch - MIT. -> https://github.com/LearnBoost/expect.js<br>
 
